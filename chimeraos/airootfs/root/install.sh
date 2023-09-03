@@ -25,7 +25,7 @@ sleep 2
 TARGET="stable"
 while ! ( curl -Ls https://github.com | grep '<html' > /dev/null ); do
     whiptail \
-     "No internet connection detected.\n\nPlease use the network configuration tool to activate a network, then select \"Quit\" to exit the tool and continue the installation." \
+     "未检测到互联网连接-No internet connection detected.\n\nPlease use the network configuration tool to activate a network, then select \"Quit\" to exit the tool and continue the installation." \
      12 50 \
      --yesno \
      --yes-button "Configure" \
@@ -121,7 +121,7 @@ if [ "${CHOICE}" == "local" ]; then
     frzr-deploy
     RESULT=$?
 else
-    frzr-deploy chimeraos/chimeraos:${TARGET}
+    frzr-deploy honjow/chimeraos:${TARGET}
     RESULT=$?
 fi
 
