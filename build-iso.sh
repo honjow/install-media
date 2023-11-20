@@ -32,8 +32,8 @@ AUR_PACKAGES="\
 "
 
 ADDITIONAL_PACKAGES="\
-    https://github.com/ChimeraOS/linux-chimeraos/releases/download/v6.3.9-chos2/linux-chimeraos-6.3.9.chos2-1-x86_64.pkg.tar.zst \
-    https://github.com/ChimeraOS/linux-chimeraos/releases/download/v6.3.9-chos2/linux-chimeraos-headers-6.3.9.chos2-1-x86_64.pkg.tar.zst \
+    https://github.com/3003n/linux-chimeraos/releases/download/v6.5.6-chos1-3/linux-chimeraos-6.5.6.chos1-3-x86_64.pkg.tar.zst \
+    https://github.com/3003n/linux-chimeraos/releases/download/v6.5.6-chos1-3/linux-chimeraos-headers-6.5.6.chos1-3-x86_64.pkg.tar.zst \
 "
 
 # create repo directory if it doesn't exist yet
