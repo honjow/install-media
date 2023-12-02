@@ -25,11 +25,11 @@ sleep 2
 TARGET="stable"
 while ! ( curl -Ls https://github.com | grep '<html' > /dev/null ); do
     whiptail \
-     "未检测到互联网连接-No internet connection detected.\n\nPlease use the network configuration tool to activate a network, then select \"Quit\" to exit the tool and continue the installation." \
+     "未检测到互联网连接。请使用网络配置工具激活网络，然后选择 "Quit" 以退出工具并继续安装。" \
      12 50 \
      --yesno \
-     --yes-button "Configure" \
-     --no-button "Exit"
+     --yes-button "网络配置" \
+     --no-button "退出安装"
 
     if [ $? -ne 0 ]; then
          exit 1
@@ -42,7 +42,7 @@ done
 MOUNT_PATH=/tmp/frzr_root
 
 if ! frzr-bootstrap gamer; then
-    whiptail --msgbox "System bootstrap step failed." 10 50
+    whiptail --msgbox "系统引导步骤失败\n输入 ./install.sh 可以重新开始" 10 50
     exit 1
 fi
 
@@ -70,18 +70,21 @@ tar -I zstd -xvf "$TMP_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O >
 mv "$TMP_FILE" "$DESTINATION"
 rm "$TMP_PKG"
 
-MENU_SELECT=$(whiptail --menu "Installer Options" 25 75 10 \
-  "Standard Install" "Install ChimeraOS with default options." \
-  "Advanced Install" "Install ChimeraOS with advanced options." \
+MENU_SELECT=$(whiptail --menu "安装程序选项" 25 75 10 \
+  "Standard Install" "使用默认选项安装 ChimeraOS" \
+  "Advanced Install" "使用高级选项安装 ChimeraOS" \
    3>&1 1>&2 2>&3)
+
+firmware_overrides_keyword="使用固件覆盖"
+unstable_keyword="Unstable-不稳定构建"
 
 if [ "$MENU_SELECT" = "Advanced Install" ]; then
   OPTIONS=$(whiptail --separate-output --checklist "Choose options" 10 55 4 \
-    "Use Firmware Overrides" "DSDT/EDID" OFF \
-    "Unstable Builds" "" OFF 3>&1 1>&2 2>&3)
+    "$firmware_overrides_keyword" "DSDT/EDID" OFF \
+    "$unstable_keyword" "" OFF 3>&1 1>&2 2>&3)
 
-  if echo "$OPTIONS" | grep -q "Use Firmware Overrides"; then
-    echo "Enabling firmware overrides..."
+  if echo "$OPTIONS" | grep -q "$firmware_overrides_keyword"; then
+    echo "启用固件覆盖..."
     if [[ ! -d "/tmp/frzr_root/etc/device-quirks/" ]]; then
       mkdir -p "/tmp/frzr_root/etc/device-quirks"
       # Create device-quirks default config
@@ -100,7 +103,7 @@ EOL
     fi
   fi
 
-  if echo "$OPTIONS" | grep -q "Unstable Builds"; then
+  if echo "$OPTIONS" | grep -q "$unstable_keyword"; then
     TARGET="unstable"
   fi
 fi
@@ -110,9 +113,9 @@ export SHOW_UI=1
 
 if ( ls -1 /dev/disk/by-label | grep -q FRZR_UPDATE ); then
 
-CHOICE=$(whiptail --menu "How would you like to install ChimeraOS?" 18 50 10 \
-  "local" "Use local media for installation." \
-  "online" "Fetch the latest stable image." \
+CHOICE=$(whiptail --menu "你想如何安装ChimeraOS ?" 18 50 10 \
+  "local" "使用本地媒介行安装." \
+  "online" "在线获取最新系统镜像." \
    3>&1 1>&2 2>&3)
 fi
 
@@ -121,18 +124,18 @@ if [ "${CHOICE}" == "local" ]; then
     frzr-deploy
     RESULT=$?
 else
-    frzr-deploy honjow/chimeraos:${TARGET}
+    frzr-deploy "3003n/chimeraos:${TARGET}"
     RESULT=$?
 fi
 
-MSG="Installation failed."
+MSG="安装失败."
 if [ "${RESULT}" == "0" ]; then
-    MSG="Installation successfully completed."
+    MSG="安装成功完成"
 elif [ "${RESULT}" == "29" ]; then
-    MSG="GitHub API rate limit error encountered. Please retry installation later."
+    MSG="遇到 GitHub API 速率限制错误, 请稍后重试安装"
 fi
 
-if (whiptail --yesno "${MSG}\n\nWould you like to restart the computer now?" 10 50); then
+if (whiptail --yesno "${MSG}\n\n立即重启?" 10 50); then
     reboot
 fi
 
