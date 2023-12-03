@@ -25,7 +25,7 @@ sleep 2
 TARGET="stable"
 while ! ( curl -Ls https://github.com | grep '<html' > /dev/null ); do
     whiptail \
-     "未检测到互联网连接。请使用网络配置工具激活网络，然后选择 "Quit" 以退出工具并继续安装。" \
+     "未检测到互联网连接。请使用网络配置工具激活网络，然后选择 <Quit> 以退出工具并继续安装。" \
      12 50 \
      --yesno \
      --yes-button "网络配置" \
