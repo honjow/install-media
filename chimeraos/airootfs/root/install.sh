@@ -76,7 +76,9 @@ MENU_SELECT=$(whiptail --menu "安装程序选项" 25 75 10 \
    3>&1 1>&2 2>&3)
 
 firmware_overrides_keyword="使用固件覆盖"
-unstable_keyword="Unstable-不稳定构建"
+unstable_keyword="Unstable 不稳定构建"
+cdn_keyword="CDN 加速"
+fallback_keyword="使用备用源"
 
 if [ "$MENU_SELECT" = "Advanced Install" ]; then
   OPTIONS=$(whiptail --separate-output --checklist "Choose options" 10 55 4 \
@@ -106,6 +108,16 @@ EOL
   if echo "$OPTIONS" | grep -q "$unstable_keyword"; then
     TARGET="unstable"
   fi
+
+  if echo "$OPTIONS" | grep -q "$cdn_keyword"; then
+    sed -i "s/^release_cdn.*/release_cdn = true/" /etc/frzr-sk.conf
+    sed -i "s/^api_cdn.*/api_cdn = true/" /etc/frzr-sk.conf
+  fi
+
+  if echo "$OPTIONS" | grep -q "$fallback_keyword"; then
+    sed -i "s/^fallback_url.*/fallback_url = true/" /etc/frzr-sk.conf
+  fi
+
 fi
 
 
