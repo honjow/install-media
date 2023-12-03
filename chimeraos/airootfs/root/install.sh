@@ -25,7 +25,7 @@ sleep 2
 TARGET="stable"
 while ! ( curl -Ls https://baidu.com | grep '<html' > /dev/null ); do
     whiptail \
-     "未检测到互联网连接。请使用网络配置工具激活网络，然后选择 <退出> 以退出工具并继续安装。" \
+     "未检测到互联网连接。请使用网络配置工具激活网络，然后选择 <Quit> 以退出工具并继续安装。" \
      12 50 \
      --yesno \
      --yes-button "网络配置" \
@@ -35,13 +35,13 @@ while ! ( curl -Ls https://baidu.com | grep '<html' > /dev/null ); do
          exit 1
     fi
 
-    LANG=zh_CN.UFT-8 nmtui-connect
+    nmtui-connect
 done
 #######################################
 
 MOUNT_PATH=/tmp/frzr_root
 
-if ! LANG=zh_CN.UFT-8 frzr-bootstrap gamer; then
+if ! frzr-bootstrap gamer; then
     whiptail --msgbox "系统引导步骤失败\n输入 ./install.sh 可以重新开始" 10 50
     exit 1
 fi
