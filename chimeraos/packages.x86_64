@@ -12,6 +12,7 @@ dhcpcd
 diffutils
 dosfstools
 efibootmgr
+frzr
 git
 intel-ucode
 jq
