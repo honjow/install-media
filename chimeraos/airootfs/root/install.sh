@@ -155,7 +155,7 @@ elif [ "${RESULT}" == "29" ]; then
     MSG="遇到 GitHub API 速率限制错误, 请稍后重试安装"
 fi
 
-if (whiptail --yesno "${MSG} RESULT:{RESULT}\n\n立即重启?" 10 50); then
+if (whiptail --yesno "${MSG} RESULT:${RESULT}\n\n立即重启?" 10 50); then
     reboot
 fi
 
