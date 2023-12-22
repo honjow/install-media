@@ -28,6 +28,7 @@ openssh
 parted
 syslinux
 usbutils
+vim
 wget
 zsh
 networkmanager
