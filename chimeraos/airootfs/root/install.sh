@@ -141,10 +141,10 @@ fi
 
 if [ "${CHOICE}" == "local" ]; then
     export local_install=true
-    frzr-deploy
+    frzr-deploy | tee /tmp/frzr.log
     RESULT=$?
 else
-    frzr-deploy "3003n/chimeraos:${TARGET}"
+    frzr-deploy "3003n/chimeraos:${TARGET}" | tee /tmp/frzr.log
     RESULT=$?
 fi
 
@@ -155,7 +155,7 @@ elif [ "${RESULT}" == "29" ]; then
     MSG="遇到 GitHub API 速率限制错误, 请稍后重试安装"
 fi
 
-if (whiptail --yesno "${MSG}\n\n立即重启?" 10 50); then
+if (whiptail --yesno "${MSG} RESULT:{RESULT}\n\n立即重启?" 10 50); then
     reboot
 fi
 

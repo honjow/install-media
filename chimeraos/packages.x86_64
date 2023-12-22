@@ -23,11 +23,11 @@ mkinitcpio
 mkinitcpio-archiso
 nano
 netctl
+coreutils
 openssh
 parted
 syslinux
 usbutils
 wget
 zsh
-frzr
 networkmanager
