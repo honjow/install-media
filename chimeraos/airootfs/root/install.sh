@@ -75,20 +75,24 @@ MENU_SELECT=$(whiptail --menu "安装程序选项" 25 75 10 \
   "Advanced Install" "使用高级选项安装 ChimeraOS" \
    3>&1 1>&2 2>&3)
 
-firmware_overrides_keyword="使用固件覆盖"
-unstable_keyword="Unstable 不稳定构建"
-cdn_keyword="CDN 加速"
-fallback_keyword="使用备用源"
+firmware_overrides_opt="使用固件覆盖"
+unstable_opt="Unstable 不稳定构建"
+cdn_opt="CDN 加速"
+fallback_opt="使用备用源"
+shou_ui_opt="显示安装界面"
+debug_opt="Debug 模式"
 
 if [ "$MENU_SELECT" = "Advanced Install" ]; then
   OPTIONS=$(whiptail --separate-output --checklist "Choose options" 10 55 4 \
-    "$firmware_overrides_keyword" "DSDT/EDID" OFF \
-    "$unstable_keyword" "" OFF \
-    "$cdn_keyword" "" OFF \
-    "$fallback_keyword" "" ON \
+    "$firmware_overrides_opt" "DSDT/EDID" OFF \
+    "$unstable_opt" "" OFF \
+    "$cdn_opt" "" OFF \
+    "$fallback_opt" "" ON \
+    "$shou_ui_opt" "" ON \
+    "$debug_opt" "" OFF \
     3>&1 1>&2 2>&3)
 
-  if echo "$OPTIONS" | grep -q "$firmware_overrides_keyword"; then
+  if echo "$OPTIONS" | grep -q "$firmware_overrides_opt"; then
     echo "启用固件覆盖..."
     if [[ ! -d "/tmp/frzr_root/etc/device-quirks/" ]]; then
       mkdir -p "/tmp/frzr_root/etc/device-quirks"
@@ -108,11 +112,11 @@ EOL
     fi
   fi
 
-  if echo "$OPTIONS" | grep -q "$unstable_keyword"; then
+  if echo "$OPTIONS" | grep -q "$unstable_opt"; then
     TARGET="unstable"
   fi
 
-  if echo "$OPTIONS" | grep -q "$cdn_keyword"; then
+  if echo "$OPTIONS" | grep -q "$cdn_opt"; then
     sed -i "s/^release_cdn.*/release_cdn = true/" /etc/frzr-sk.conf
     sed -i "s/^api_cdn.*/api_cdn = true/" /etc/frzr-sk.conf
   else
@@ -120,16 +124,23 @@ EOL
     sed -i "s/^api_cdn.*/api_cdn = false/" /etc/frzr-sk.conf
   fi
 
-  if echo "$OPTIONS" | grep -q "$fallback_keyword"; then
+  if echo "$OPTIONS" | grep -q "$fallback_opt"; then
     sed -i "s/^fallback_url.*/fallback_url = true/" /etc/frzr-sk.conf
   else
     sed -i "s/^fallback_url.*/fallback_url = false/" /etc/frzr-sk.conf
   fi
 
+  if echo "$OPTIONS" | grep -q "$shou_ui_opt"; then
+    export SHOW_UI=1
+  fi
+
+  if echo "$OPTIONS" | grep -q "$debug_opt"; then
+    export DEBUG=1
+  fi
+
 fi
 
-
-export SHOW_UI=1
+# export SHOW_UI=1
 
 if ( ls -1 /dev/disk/by-label | grep -q FRZR_UPDATE ); then
 
@@ -150,10 +161,14 @@ fi
 
 MSG="安装失败."
 if [ "${RESULT}" == "0" ]; then
-    MSG="安装成功完成"
+    MSG="安装成功完成" 
 elif [ "${RESULT}" == "29" ]; then
     MSG="遇到 GitHub API 速率限制错误, 请稍后重试安装"
+else
+    MSG="安装失败. 请检查 /tmp/frzr.log 文件以获取更多信息."
 fi
+
+echo -e "${MSG} RESULT:${RESULT}\n\n"
 
 if (whiptail --yesno "${MSG} RESULT:${RESULT}\n\n立即重启?" 10 50); then
     reboot
