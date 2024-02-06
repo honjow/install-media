@@ -22,7 +22,7 @@ fi
 # Waiting a bit because some wifi chips are slow to scan 5GHZ networks
 sleep 2
 
-TARGET="stable"
+# TARGET="stable"
 while ! ( curl -Ls https://baidu.com | grep '<html' > /dev/null ); do
     whiptail \
      "未检测到互联网连接。请使用网络配置工具激活网络，然后选择 <Quit> 以退出工具并继续安装。" \
@@ -70,13 +70,19 @@ tar -I zstd -xvf "$TMP_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O >
 mv "$TMP_FILE" "$DESTINATION"
 rm "$TMP_PKG"
 
+TARGET=$(whiptail --menu "选择系统版本" 25 75 10 \
+  "stable" "stable 稳定版 (GNOME) -- 默认" \
+  "unstable" "unstable 不稳定版 (GNOME)" \
+  "plasma" "plasma 稳定版 (KDE)" \
+  "plasma-dev" "plasma-dev 不稳定版 (KDE)" \
+   3>&1 1>&2 2>&3)
+
 MENU_SELECT=$(whiptail --menu "安装程序选项" 25 75 10 \
   "Standard Install" "使用默认选项安装 ChimeraOS" \
   "Advanced Install" "使用高级选项安装 ChimeraOS" \
    3>&1 1>&2 2>&3)
 
 firmware_overrides_opt="使用固件覆盖"
-unstable_opt="Unstable 不稳定构建"
 cdn_opt="CDN 加速"
 fallback_opt="使用备用源"
 shou_ui_opt="显示安装界面"
@@ -85,7 +91,6 @@ debug_opt="Debug 模式"
 if [ "$MENU_SELECT" = "Advanced Install" ]; then
   OPTIONS=$(whiptail --separate-output --checklist "Choose options" 10 55 4 \
     "$firmware_overrides_opt" "DSDT/EDID" OFF \
-    "$unstable_opt" "" OFF \
     "$cdn_opt" "" OFF \
     "$fallback_opt" "" ON \
     "$shou_ui_opt" "" ON \
@@ -110,10 +115,6 @@ LAST_BIOS_VENDOR=None
 LAST_BIOS_VERSION=None
 EOL
     fi
-  fi
-
-  if echo "$OPTIONS" | grep -q "$unstable_opt"; then
-    TARGET="unstable"
   fi
 
   if echo "$OPTIONS" | grep -q "$cdn_opt"; then
