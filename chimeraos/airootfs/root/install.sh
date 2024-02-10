@@ -90,7 +90,7 @@ shou_ui_opt="显示安装界面"
 debug_opt="Debug 模式"
 
 if [ "$MENU_SELECT" = "Advanced Install" ]; then
-  OPTIONS=$(whiptail --title "空格键切换选中" --separate-output --checklist "Choose options" 25 55 4 \
+  OPTIONS=$(whiptail --title "高级选项" --separate-output --checklist "使用空格键切换选中, 回车直接完成" 25 55 10 \
     "$firmware_overrides_opt" "DSDT/EDID" OFF \
     "$cdn_opt" "" OFF \
     "$fallback_opt" "" ON \
