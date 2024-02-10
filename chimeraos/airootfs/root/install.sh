@@ -154,10 +154,12 @@ fi
 if [ "${CHOICE}" == "local" ]; then
     export local_install=true
     frzr-deploy | tee /tmp/frzr.log
-    RESULT=$?
+    # bash 管道执行命令后，获取命令的返回值 ，从 PIPESTATUS[0] 开始
+    # zsh 则是从 pipestatus[1] 开始
+    RESULT=${PIPESTATUS[0]}
 else
     frzr-deploy "3003n/chimeraos:${TARGET}" | tee /tmp/frzr.log
-    RESULT=$?
+    RESULT=${PIPESTATUS[0]}
 fi
 
 MSG="安装失败."
