@@ -81,6 +81,8 @@ MENU_SELECT=$(whiptail --menu "安装程序选项" 25 75 10 \
   "Advanced Install" "使用高级选项安装 ChimeraOS" \
   3>&1 1>&2 2>&3)
 
+_SHOW_UI=1
+
 firmware_overrides_opt="使用固件覆盖"
 cdn_opt="CDN 加速"
 fallback_opt="使用备用源"
@@ -88,7 +90,7 @@ shou_ui_opt="显示安装界面"
 debug_opt="Debug 模式"
 
 if [ "$MENU_SELECT" = "Advanced Install" ]; then
-  OPTIONS=$(whiptail --separate-output --checklist "Choose options" 10 55 4 \
+  OPTIONS=$(whiptail --title "空格键切换选中" --separate-output --checklist "Choose options" 25 55 4 \
     "$firmware_overrides_opt" "DSDT/EDID" OFF \
     "$cdn_opt" "" OFF \
     "$fallback_opt" "" ON \
