@@ -132,16 +132,17 @@ EOL
   fi
 
   if echo "$OPTIONS" | grep -q "$shou_ui_opt"; then
-    export SHOW_UI=1
+    _SHOW_UI=1
+  else
+    _SHOW_UI=""
   fi
 
   if echo "$OPTIONS" | grep -q "$debug_opt"; then
     export DEBUG=1
   fi
-
 fi
 
-# export SHOW_UI=1
+export SHOW_UI="${_SHOW_UI}"
 
 if ( ls -1 /dev/disk/by-label | grep -q FRZR_UPDATE ); then
 
