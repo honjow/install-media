@@ -41,7 +41,7 @@ done
 MOUNT_PATH=/tmp/frzr_root
 
 if ! frzr-bootstrap gamer; then
-  whiptail --msgbox "系统引导步骤失败\n输入 ./install.sh 可以重新开始" 10 50
+  whiptail --msgbox "系统引导步骤失败\n输入 ~/install.sh 可以重新开始" 10 50
   exit 1
 fi
 

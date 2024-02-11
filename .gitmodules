@@ -1,0 +1,6 @@
+[submodule "chimeraos/airootfs/root/.oh-my-zsh"]
+	path = chimeraos/airootfs/root/.oh-my-zsh
+	url = https://github.com/ohmyzsh/ohmyzsh.git
+[submodule "chimeraos/airootfs/root/.oh-my-zsh-custom/plugins/fast-syntax-highlighting"]
+	path = chimeraos/airootfs/root/.oh-my-zsh-custom/plugins/fast-syntax-highlighting
+	url = https://github.com/zdharma-continuum/fast-syntax-highlighting.git
