@@ -18,6 +18,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Change directory
         run: cd $GITHUB_WORKSPACE
+      - name: Update submodules
+        run: git submodule update --init --recursive
       - name: Build ISO
         id: build_iso
         run: ./build-iso-docker.sh
