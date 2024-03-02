@@ -1,5 +1,19 @@
 #! /bin/bash
 
+clean_progress() {
+        local scale=$1
+        local postfix=$2
+        local last_value=$scale
+        while IFS= read -r line; do
+                value=$(( ${line}*${scale}/100 ))
+                if [ "$last_value" != "$value" ]; then
+                        echo ${value}${postfix}
+                        last_value=$value
+                fi
+        done
+}
+
+
 if [ $EUID -ne 0 ]; then
   echo "$(basename $0) must be run as root"
   exit 1
@@ -16,13 +30,14 @@ if [ ! -d /sys/firmware/efi/efivars ]; then
   exit 1
 fi
 
-#### Test conenction or ask the user for configuration ####
+
+#### Test connection or ask the user for configuration ####
 
 # Waiting a bit because some wifi chips are slow to scan 5GHZ networks
 sleep 2
 
 # TARGET="stable"
-while ! (curl -Ls https://baidu.com | grep '<html' >/dev/null); do
+while ! (curl -Ls --http1.1  https://baidu.com | grep '<html' >/dev/null); do
   whiptail \
     "未检测到互联网连接。请使用网络配置工具激活网络，然后选择 <Quit> 以退出工具并继续安装。" \
     12 50 \
@@ -64,8 +79,11 @@ if [[ ! -d "$DESTINATION" ]]; then
   mkdir -p /tmp/frzr_root/etc/first-boot
 fi
 
-curl -o "$TMP_PKG" "$URL"
-tar -I zstd -xvf "$TMP_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O >"$TMP_FILE"
+curl --http1.1 -# -L -o "${TMP_PKG}" -C - "${URL}" 2>&1 | \
+stdbuf -oL tr '\r' '\n' | grep --line-buffered -oP '[0-9]*+(?=.[0-9])' | clean_progress 100 | \
+whiptail --gauge "Downloading Steam" 10 50 0
+
+tar -I zstd -xvf "$TMP_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O > "$TMP_FILE"
 mv "$TMP_FILE" "$DESTINATION"
 rm "$TMP_PKG"
 
@@ -77,8 +95,8 @@ TARGET=$(whiptail --menu "选择系统版本" 25 75 10 \
   3>&1 1>&2 2>&3)
 
 MENU_SELECT=$(whiptail --menu "安装程序选项" 25 75 10 \
-  "Standard Install" "使用默认选项安装 ChimeraOS" \
-  "Advanced Install" "使用高级选项安装 ChimeraOS" \
+  "Standard:" "使用默认选项安装 ChimeraOS" \
+  "Advanced:" "使用高级选项安装 ChimeraOS" \
   3>&1 1>&2 2>&3)
 
 _SHOW_UI=1
@@ -89,7 +107,7 @@ fallback_opt="使用备用源"
 shou_ui_opt="显示安装界面"
 debug_opt="Debug 模式"
 
-if [ "$MENU_SELECT" = "Advanced Install" ]; then
+if [ "$MENU_SELECT" = "Advanced:" ]; then
   OPTIONS=$(whiptail --title "高级选项" --separate-output --checklist "使用空格键切换选中, 回车直接完成" 25 55 10 \
     "$firmware_overrides_opt" "DSDT/EDID" OFF \
     "$cdn_opt" "" OFF \
