@@ -1,18 +1,17 @@
 #! /bin/bash
 
 clean_progress() {
-        local scale=$1
-        local postfix=$2
-        local last_value=$scale
-        while IFS= read -r line; do
-                value=$(( ${line}*${scale}/100 ))
-                if [ "$last_value" != "$value" ]; then
-                        echo ${value}${postfix}
-                        last_value=$value
-                fi
-        done
+  local scale=$1
+  local postfix=$2
+  local last_value=$scale
+  while IFS= read -r line; do
+    value=$((${line} * ${scale} / 100))
+    if [ "$last_value" != "$value" ]; then
+      echo ${value}${postfix}
+      last_value=$value
+    fi
+  done
 }
-
 
 if [ $EUID -ne 0 ]; then
   echo "$(basename $0) must be run as root"
@@ -30,14 +29,13 @@ if [ ! -d /sys/firmware/efi/efivars ]; then
   exit 1
 fi
 
-
 #### Test connection or ask the user for configuration ####
 
 # Waiting a bit because some wifi chips are slow to scan 5GHZ networks
 sleep 2
 
 # TARGET="stable"
-while ! (curl -Ls --http1.1  https://baidu.com | grep '<html' >/dev/null); do
+while ! (curl -Ls --http1.1 https://baidu.com | grep '<html' >/dev/null); do
   whiptail \
     "未检测到互联网连接。请使用网络配置工具激活网络，然后选择 <Quit> 以退出工具并继续安装。" \
     12 50 \
@@ -79,11 +77,11 @@ if [[ ! -d "$DESTINATION" ]]; then
   mkdir -p /tmp/frzr_root/etc/first-boot
 fi
 
-curl --http1.1 -# -L -o "${TMP_PKG}" -C - "${URL}" 2>&1 | \
-stdbuf -oL tr '\r' '\n' | grep --line-buffered -oP '[0-9]*+(?=.[0-9])' | clean_progress 100 | \
-whiptail --gauge "Downloading Steam" 10 50 0
+curl --http1.1 -# -L -o "${TMP_PKG}" -C - "${URL}" 2>&1 |
+  stdbuf -oL tr '\r' '\n' | grep --line-buffered -oP '[0-9]*+(?=.[0-9])' | clean_progress 100 |
+  whiptail --gauge "Downloading Steam" 10 50 0
 
-tar -I zstd -xvf "$TMP_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O > "$TMP_FILE"
+tar -I zstd -xvf "$TMP_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O >"$TMP_FILE"
 mv "$TMP_FILE" "$DESTINATION"
 rm "$TMP_PKG"
 
@@ -171,6 +169,8 @@ if (ls -1 /dev/disk/by-label | grep -q FRZR_UPDATE); then
     3>&1 1>&2 2>&3)
 fi
 
+export NOT_UMOUNT=true
+
 if [ "${CHOICE}" == "local" ]; then
   export local_install=true
   frzr-deploy | tee /tmp/frzr.log
@@ -184,7 +184,17 @@ fi
 
 MSG="安装失败."
 if [ "${RESULT}" == "0" ]; then
-  MSG="安装成功完成"
+  BOOT_CFG="${MOUNT_PATH}/boot/loader/entries/frzr.conf"
+  if [[ ! -f "${BOOT_CFG}" ]]; then
+    if [[ -n "$BOOT_CFG_PARA" ]]; then
+      echo "${BOOT_CFG_PARA}" > "${BOOT_CFG}"
+      echo "default frzr.conf" > "${MOUNT_PATH}/boot/loader/loader.conf"
+    else
+      MSG="安装失败. 未找到启动配置文件."
+    fi
+  else
+    MSG="安装成功完成"
+  fi
 elif [ "${RESULT}" == "29" ]; then
   MSG="遇到 GitHub API 速率限制错误, 请稍后重试安装"
 else
