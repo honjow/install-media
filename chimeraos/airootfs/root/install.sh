@@ -29,10 +29,15 @@ if [ ! -d /sys/firmware/efi/efivars ]; then
   exit 1
 fi
 
+
+# try to set correct date & time -- required to be able to connect to github via https if your hardware clock is set too far into the past
+timedatectl set-ntp true
+
+
 #### Test connection or ask the user for configuration ####
 
-# Waiting a bit because some wifi chips are slow to scan 5GHZ networks
-sleep 2
+# Waiting a bit because some wifi chips are slow to scan 5GHZ networks and to avoid kernel boot up messages printing over the screen
+sleep 10
 
 # TARGET="stable"
 while ! (curl -Ls --http1.1 https://baidu.com | grep '<html' >/dev/null); do
@@ -69,7 +74,7 @@ fi
 
 # Grab the steam bootstrap for first boot
 
-URL="https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-main/os/x86_64/steam-jupiter-stable-1.0.0.78-1.2-x86_64.pkg.tar.zst"
+URL="https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-main/os/x86_64/steam-jupiter-stable-1.0.0.79-1-x86_64.pkg.tar.zst"
 TMP_PKG="/tmp/package.pkg.tar.zst"
 TMP_FILE="/tmp/bootstraplinux_ubuntu12_32.tar.xz"
 DESTINATION="/tmp/frzr_root/etc/first-boot/"
