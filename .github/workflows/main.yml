@@ -2,7 +2,6 @@ name: Installer ISO build
 on:
   push:
     branches:
-    - 'master'
     - 'sk-chimeraos'
 jobs:
   build:
