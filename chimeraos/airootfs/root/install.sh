@@ -84,7 +84,7 @@ fi
 
 curl --http1.1 -# -L -o "${TMP_PKG}" -C - "${URL}" 2>&1 |
   stdbuf -oL tr '\r' '\n' | grep --line-buffered -oP '[0-9]*+(?=.[0-9])' | clean_progress 100 |
-  whiptail --gauge "Downloading Steam" 10 50 0
+  whiptail --gauge "正在下载 Steam ..." 10 50 0
 
 tar -I zstd -xvf "$TMP_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O >"$TMP_FILE"
 mv "$TMP_FILE" "$DESTINATION"
@@ -92,8 +92,10 @@ rm "$TMP_PKG"
 
 TARGET=$(whiptail --menu "选择系统版本" 25 75 10 \
   "stable" "stable 稳定版 (GNOME) -- 默认" \
+  "testing" "testing 测试版 (GNOME)" \
   "unstable" "unstable 不稳定版 (GNOME)" \
   "plasma" "plasma 稳定版 (KDE)" \
+  "plasma-pre" "plasma-pre 预览版 (KDE)" \
   "plasma-dev" "plasma-dev 不稳定版 (KDE)" \
   3>&1 1>&2 2>&3)
 
