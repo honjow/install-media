@@ -29,11 +29,12 @@ AUR_PACKAGES="\
     rtl8812au-dkms-git \
     rtl8814au-dkms-git \
     rz608-fix-git \
+    yay-bin \
 "
 
 ADDITIONAL_PACKAGES="\
-    https://github.com/3003n/linux-chimeraos/releases/download/v6.6.14-chos1-3/linux-chimeraos-6.6.14.chos1-3-x86_64.pkg.tar.zst \
-	https://github.com/3003n/linux-chimeraos/releases/download/v6.6.14-chos1-3/linux-chimeraos-headers-6.6.14.chos1-3-x86_64.pkg.tar.zst \
+    https://github.com/3003n/linux-chimeraos/releases/download/v6.8.9.sk-chos1-1/linux-chimeraos-6.8.9.sk.chos1-1-x86_64.pkg.tar.zst \
+	https://github.com/3003n/linux-chimeraos/releases/download/v6.8.9.sk-chos1-1/linux-chimeraos-headers-6.8.9.sk.chos1-1-x86_64.pkg.tar.zst \
 "
 
 # create repo directory if it doesn't exist yet
