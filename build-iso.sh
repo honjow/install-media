@@ -22,6 +22,7 @@ mkdir -p "${temp_dir}"
 
 # add AUR packages to the build
 AUR_PACKAGES="\
+    fpaste \
     frzr-sk \
     rtl88x2bu-dkms-git \
     rtw89-dkms-git \

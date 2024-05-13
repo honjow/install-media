@@ -205,7 +205,11 @@ if [ "${RESULT}" == "0" ]; then
 elif [ "${RESULT}" == "29" ]; then
   MSG="遇到 GitHub API 速率限制错误, 请稍后重试安装"
 else
-  MSG="安装失败. 请检查 /tmp/frzr.log 文件以获取更多信息."
+  fpaste_url=$(fpaste /tmp/frzr.log 2>/dev/null)
+  if [ -n "${fpaste_url}" ]; then
+    fpaste_msg="日志已上传至 ${fpaste_url}"
+  fi
+  MSG="安装失败. 请检查 /tmp/frzr.log 文件以获取更多信息. ${fpaste_msg}"
 fi
 
 echo -e "${MSG} RESULT:${RESULT}\n\n"
