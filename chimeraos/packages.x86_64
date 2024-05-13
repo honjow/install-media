@@ -12,6 +12,7 @@ dhcpcd
 diffutils
 dosfstools
 efibootmgr
+fpaste
 frzr
 git
 intel-ucode
@@ -31,5 +32,6 @@ syslinux
 usbutils
 vim
 wget
+yay
 zsh
 networkmanager

@@ -30,6 +30,7 @@ AUR_PACKAGES="\
     rtl8812au-dkms-git \
     rtl8814au-dkms-git \
     rz608-fix-git \
+    yay-bin \
 "
 
 ADDITIONAL_PACKAGES="\
