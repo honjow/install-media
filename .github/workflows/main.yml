@@ -2,7 +2,7 @@ name: Installer ISO build
 on:
   push:
     branches:
-    - 'sk-chimeraos'
+    - 'sk'
 jobs:
   build:
     name: Installer ISO build
@@ -32,7 +32,7 @@ jobs:
           draft: false
           prerelease: true
           fail_on_unmatched_files: true
-          generate_release_notes: true
+          generate_release_notes: false
           files: |
             output/${{ steps.build_iso.outputs.iso_file_name }}
             output/sha256sum.txt
