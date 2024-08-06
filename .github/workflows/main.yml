@@ -19,6 +19,11 @@ jobs:
         run: cd $GITHUB_WORKSPACE
       - name: Update submodules
         run: git submodule update --init --recursive
+      - name: Download Steam
+        run: |
+          URL="https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-main/os/x86_64/steam-jupiter-stable-1.0.0.79-1.1-x86_64.pkg.tar.zst"
+          mkdir -p chimeraos/airootfs/root/packages
+          curl -L -o chimeraos/airootfs/root/packages/steam-jupiter-stable.pkg.tar.zst $URL
       - name: Build ISO
         id: build_iso
         run: ./build-iso-docker.sh
