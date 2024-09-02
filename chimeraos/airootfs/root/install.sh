@@ -92,12 +92,18 @@ mv "$TMP_FILE" "$DESTINATION"
 # rm "$TMP_PKG"
 
 TARGET=$(whiptail --menu "选择系统版本" 25 75 10 \
-  "stable" "stable 稳定版 (GNOME) -- 默认" \
-  "testing" "testing 测试版 (GNOME)" \
-  "unstable" "unstable 不稳定版 (GNOME)" \
-  "plasma" "plasma 稳定版 (KDE)" \
-  "plasma-pre" "plasma-pre 预览版 (KDE)" \
-  "plasma-dev" "plasma-dev 不稳定版 (KDE)" \
+  "stable"            "stable 稳定版 (GNOME) -- 默认" \
+  "testing"           "testing 测试/预览版 (GNOME)" \
+  "unstable"          "unstable 不稳定/开发版 (GNOME)" \
+  "plasma"            "plasma 稳定版 (KDE)" \
+  "plasma-pre"        "plasma-pre 测试/预览版版 (KDE)" \
+  "plasma-dev"        "plasma-dev 开发版 (KDE)" \
+  "gnome_nvidia"      "gnome_nvidia 稳定版 (GNOME NVIDIA)" \
+  "gnome_nvidia-pre"  "gnome_nvidia-pre 测试/预览版版 (GNOME NVIDIA)" \
+  "gnome_nvidia-dev"  "gnome_nvidia-dev 不稳定/开发版 (GNOME NVIDIA)" \
+  "plasma_nvidia"     "plasma_nvidia 稳定版 (KDE NVIDIA)" \
+  "plasma_nvidia-pre" "plasma_nvidia-pre 测试/预览版版 (KDE NVIDIA)" \
+  "plasma_nvidia-dev" "plasma_nvidia-dev 不稳定/开发版 (KDE NVIDIA)" \
   3>&1 1>&2 2>&3)
 
 MENU_SELECT=$(whiptail --menu "安装程序选项" 25 75 10 \
