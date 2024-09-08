@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -o pipefail
+
 clean_progress() {
   local scale=$1
   local postfix=$2
@@ -29,10 +31,8 @@ if [ ! -d /sys/firmware/efi/efivars ]; then
   exit 1
 fi
 
-
 # try to set correct date & time -- required to be able to connect to github via https if your hardware clock is set too far into the past
 timedatectl set-ntp true
-
 
 #### Test connection or ask the user for configuration ####
 
@@ -92,16 +92,16 @@ mv "$TMP_FILE" "$DESTINATION"
 # rm "$TMP_PKG"
 
 TARGET=$(whiptail --menu "选择系统版本" 25 75 10 \
-  "stable"            "stable 稳定版 (GNOME) -- 默认" \
-  "testing"           "testing 测试/预览版 (GNOME)" \
-  "unstable"          "unstable 不稳定/开发版 (GNOME)" \
-  "plasma"            "plasma 稳定版 (KDE)" \
-  "plasma-pre"        "plasma-pre 测试/预览版版 (KDE)" \
-  "plasma-dev"        "plasma-dev 开发版 (KDE)" \
-  "gnome_nvidia"      "gnome_nvidia 稳定版 (GNOME NVIDIA)" \
-  "gnome_nvidia-pre"  "gnome_nvidia-pre 测试/预览版版 (GNOME NVIDIA)" \
-  "gnome_nvidia-dev"  "gnome_nvidia-dev 不稳定/开发版 (GNOME NVIDIA)" \
-  "plasma_nvidia"     "plasma_nvidia 稳定版 (KDE NVIDIA)" \
+  "stable" "stable 稳定版 (GNOME) -- 默认" \
+  "testing" "testing 测试/预览版 (GNOME)" \
+  "unstable" "unstable 不稳定/开发版 (GNOME)" \
+  "plasma" "plasma 稳定版 (KDE)" \
+  "plasma-pre" "plasma-pre 测试/预览版版 (KDE)" \
+  "plasma-dev" "plasma-dev 开发版 (KDE)" \
+  "gnome_nvidia" "gnome_nvidia 稳定版 (GNOME NVIDIA)" \
+  "gnome_nvidia-pre" "gnome_nvidia-pre 测试/预览版版 (GNOME NVIDIA)" \
+  "gnome_nvidia-dev" "gnome_nvidia-dev 不稳定/开发版 (GNOME NVIDIA)" \
+  "plasma_nvidia" "plasma_nvidia 稳定版 (KDE NVIDIA)" \
   "plasma_nvidia-pre" "plasma_nvidia-pre 测试/预览版版 (KDE NVIDIA)" \
   "plasma_nvidia-dev" "plasma_nvidia-dev 不稳定/开发版 (KDE NVIDIA)" \
   3>&1 1>&2 2>&3)
@@ -201,8 +201,8 @@ if [ "${RESULT}" == "0" ]; then
   BOOT_CFG="${MOUNT_PATH}/boot/loader/entries/frzr.conf"
   if [[ ! -f "${BOOT_CFG}" ]]; then
     if [[ -n "$BOOT_CFG_PARA" ]]; then
-      echo "${BOOT_CFG_PARA}" > "${BOOT_CFG}"
-      echo "default frzr.conf" > "${MOUNT_PATH}/boot/loader/loader.conf"
+      echo "${BOOT_CFG_PARA}" >"${BOOT_CFG}"
+      echo "default frzr.conf" >"${MOUNT_PATH}/boot/loader/loader.conf"
     else
       MSG="安装失败. 未找到启动配置文件."
     fi
@@ -221,8 +221,29 @@ fi
 
 echo -e "${MSG} RESULT:${RESULT}\n\n"
 
-if (whiptail --yesno "${MSG} RESULT:${RESULT}\n\n立即重启?" 10 50); then
-  reboot
+if [ "$SHOW_UI" == "1" ]; then
+  if (whiptail --yesno "${MSG} RESULT:${RESULT}\n\n立即重启?" 10 50); then
+    reboot
+  fi
+else
+  # 命令行显示错误信息，提示用户查看日志。检测用户输入，y重启，n退出，r执行 ~/install.sh 重新安装
+  echo -e "${MSG} RESULT:${RESULT}\n\n立即重启? (y/n/r)"
+  read -r -n 1 -s -t 60 -p "立即重启? (y/n/r)" input
+  echo
+  case $input in
+  [yY])
+    reboot
+    ;;
+  [nN])
+    exit 1
+    ;;
+  [rR])
+    ~/install.sh
+    ;;
+  *)
+    echo "无效输入"
+    ;;
+  esac
 fi
 
 exit ${RESULT}
