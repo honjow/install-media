@@ -35,6 +35,12 @@ get_boot_disk() {
         local current_boot_id=$(efibootmgr | grep BootCurrent | head -1 | cut -d':' -f 2 | tr -d ' ')
         local boot_disk_info=$(efibootmgr | grep "Boot${current_boot_id}" | head -1)
         local part_uuid=$(echo $boot_disk_info | tr "/" "\n" | grep "HD(" | cut -d',' -f3 | head -1 | sed -e 's/^0x//')
+
+        if [ -z $part_uuid ]; then
+                # prevent printing errors when the boot disk info is not in a known format
+                return
+        fi
+
         local part=$(blkid | grep $part_uuid | cut -d':' -f1 | head -1 | sed -e 's,/dev/,,')
         local part_path=$(readlink "/sys/class/block/$part")
         basename `dirname $part_path`
@@ -90,8 +96,8 @@ get_disk_human_description() {
         local transport=$(lsblk --list -n -o name,tran | grep "$name " | cut -d' ' -f2- | \
                 sed -e 's/usb/USB/' | \
                 sed -e 's/nvme/Internal/' | \
-                sed -e 's/ata/Internal/' | \
                 sed -e 's/sata/Internal/' | \
+                sed -e 's/ata/Internal/' | \
                 sed -e 's/mmc/SD card/' | \
                 xargs echo -n)
         echo "[${transport}] ${vendor} ${model:=Unknown model} ($size)" | xargs echo -n
@@ -114,7 +120,13 @@ select_disk() {
             # values are the disk description
             device_list=()
 
-            device_output=$(lsblk --list -n -o name,type | grep disk | grep -v zram | grep -v `get_boot_disk`)
+            boot_disk=$(get_boot_disk)
+            if [ -n "$boot_disk" ]; then
+                    device_output=$(lsblk --list -n -o name,type | grep disk | grep -v zram | grep -v $boot_disk)
+            else
+                    device_output=$(lsblk --list -n -o name,type | grep disk | grep -v zram)
+            fi
+
             while read -r line; do
                     name=$(echo "$line" | cut -d' ' -f1 | xargs echo -n)
                     description=$(get_disk_human_description $name)
@@ -125,10 +137,15 @@ select_disk() {
                     device_list+=("$description")
             done <<< "$device_output"
 
+            # NOTE: each disk entry consists of 2 elements in the array (disk name & disk description)
             if [ "${#device_list[@]}" -gt 2 ]; then
                     export DISK=$(whiptail --nocancel --menu "Choose a disk to install $OS_NAME on:" 20 70 5 "${device_list[@]}" 3>&1 1>&2 2>&3)
-            else
+            elif [ "${#device_list[@]}" -eq 2 ]; then
+                    # skip selection menu if only a single disk is available to choose from
                     export DISK=${device_list[0]}
+            else
+                    whiptail --msgbox "Could not find a disk to install to.\n\nPlease connect a 64 GB or larger disk and start the installer again." 12 70
+                    cancel_install
             fi
 
             export DISK_DESC=$(get_disk_human_description $DISK)
@@ -187,9 +204,9 @@ timedatectl set-ntp true
 
 #### Test connection or ask the user for configuration ####
 
-# Waiting a bit because some wifi chips are slow to scan 5GHZ networks and to avoid kernel boot up messages printing over the screen
+# Waiting a bit because some wifi chips are slow to scan 5GHZ networks
 echo "Starting installer..."
-sleep 10
+sleep 2
 
 # TARGET="stable"
 while ! (curl -Ls --http1.1 https://bing.com | grep '<html' >/dev/null); do
