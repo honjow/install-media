@@ -3,6 +3,7 @@ on:
   push:
     branches:
     - 'sk'
+    - 'sk-new'
 jobs:
   build:
     name: Installer ISO build
