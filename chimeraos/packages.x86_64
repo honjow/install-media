@@ -16,6 +16,7 @@ efibootmgr
 fpaste
 frzr
 git
+inputplumber-bin
 intel-ucode
 jq
 libnewt
@@ -29,7 +30,7 @@ netctl
 coreutils
 openssh
 parted
-syslinux
+plymouth
 usbutils
 vim
 wget

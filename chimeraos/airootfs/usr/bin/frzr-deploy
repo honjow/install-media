@@ -1,0 +1,16 @@
+#! /bin/bash
+
+if [ $EUID -ne 0 ]; then
+	echo "$(basename $0) must be run as root"
+	exit 1
+fi
+
+
+flock -E 255 -n /tmp/frzr.lock ${BASH_SOURCE%/*}/__frzr-deploy $@
+RESULT=$?
+
+if [ $RESULT == 255 ]; then
+	echo "$(basename $0) is already running"
+fi
+
+exit $RESULT

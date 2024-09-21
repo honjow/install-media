@@ -31,6 +31,7 @@ AUR_PACKAGES="\
     rtl8814au-dkms-git \
     rz608-fix-git \
     yay-bin \
+    inputplumber-bin \
 "
 
 ADDITIONAL_PACKAGES="\
