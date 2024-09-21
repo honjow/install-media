@@ -104,7 +104,7 @@ get_disk_human_description() {
 }
 
 cancel_install() {
-    if (whiptail --yesno --yes-button "Power off" --no-button "Open command prompt" "Installation was cancelled. What would you like to do?" 10 70); then
+    if (whiptail --yesno --yes-button "关机" --no-button "打开命令行" "安装已取消, 您还需要要做什么?" 10 70); then
         poweroff
     fi
 
@@ -139,12 +139,12 @@ select_disk() {
 
             # NOTE: each disk entry consists of 2 elements in the array (disk name & disk description)
             if [ "${#device_list[@]}" -gt 2 ]; then
-                    export DISK=$(whiptail --nocancel --menu "Choose a disk to install $OS_NAME on:" 20 70 5 "${device_list[@]}" 3>&1 1>&2 2>&3)
+                    export DISK=$(whiptail --nocancel --menu "选择一个磁盘来安装 $OS_NAME:" 20 70 5 "${device_list[@]}" 3>&1 1>&2 2>&3)
             elif [ "${#device_list[@]}" -eq 2 ]; then
                     # skip selection menu if only a single disk is available to choose from
                     export DISK=${device_list[0]}
             else
-                    whiptail --msgbox "Could not find a disk to install to.\n\nPlease connect a 64 GB or larger disk and start the installer again." 12 70
+                    whiptail --msgbox "找不到可安装的磁盘\n\n请连接一个容量为64GB或更大的磁盘, 然后重新启动安装程序." 12 70
                     cancel_install
             fi
 
@@ -152,7 +152,7 @@ select_disk() {
 
             if is_disk_smaller_than $DISK $MIN_DISK_SIZE; then
                     if (whiptail --yesno --yes-button "Select a different disk" --no-button "Cancel install" \
-                            "ERROR: The selected disk $DISK - $DISK_DESC is too small. $OS_NAME requires at least $MIN_DISK_SIZE GB.\n\nPlease select a different disk." 12 75); then
+                            "错误: 所选磁盘 $DISK - $DISK_DESC 太小. $OS_NAME 需要至少 $MIN_DISK_SIZE GB \n\n请选择其他磁盘." 12 75); then
                             continue
                     else
                             cancel_install
@@ -161,7 +161,7 @@ select_disk() {
 
             if is_disk_external $DISK; then
                     if (whiptail --yesno --defaultno --yes-button "Install anyway" --no-button "Select a different disk" \
-                            "WARNING: $DISK - $DISK_DESC appears to be an external disk. Installing $OS_NAME to an external disk is not officially supported and may result in poor performance and permanent damage to the disk.\n\nDo you wish to install anyway?" 12 80); then
+                            "警告: $DISK - $DISK_DESC 似乎是外部磁盘. 在外部磁盘上安装 $OS_NAME 不受官方支持, 可能导致性能不佳和对磁盘造成永久损坏. \n\n您是否仍要继续安装?" 12 80); then
                             break
                     else
                             # Unlikely that we would ever have ONLY an external disk, so this should be good enough
@@ -231,10 +231,10 @@ MOUNT_PATH=/tmp/frzr_root
 select_disk
 
 # warn before erasing disk
-if ! (whiptail --yesno --defaultno --yes-button "Erase disk and install" --no-button "Cancel install" "\
-WARNING: $OS_NAME will now be installed and all data on the following disk will be lost:\n\n\
+if ! (whiptail --yesno --defaultno --yes-button "擦除磁盘并安装" --no-button "取消安装" "\
+警告: $OS_NAME 将被安装，以下磁盘上的所有数据将丢失: \n\n\
         $DISK - $DISK_DESC\n\n\
-Do you wish to proceed?" 15 70); then
+您是否要继续?" 15 70); then
         cancel_install
 fi
 
