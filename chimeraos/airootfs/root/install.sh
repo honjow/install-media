@@ -264,19 +264,19 @@ fi
 
 # URL="https://steamdeck-packages.steamos.cloud/archlinux-mirror/jupiter-main/os/x86_64/steam-jupiter-stable-1.0.0.79-1.1-x86_64.pkg.tar.zst"
 # TMP_PKG="/tmp/package.pkg.tar.zst"
-STM_PKG="/root/packages/steam-jupiter-stable.pkg.tar.zst"
-TMP_FILE="/tmp/bootstraplinux_ubuntu12_32.tar.xz"
-DESTINATION="/tmp/frzr_root/etc/first-boot/"
-if [[ ! -d "$DESTINATION" ]]; then
-  mkdir -p /tmp/frzr_root/etc/first-boot
-fi
+# STM_PKG="/root/packages/steam-jupiter-stable.pkg.tar.zst"
+# TMP_FILE="/tmp/bootstraplinux_ubuntu12_32.tar.xz"
+# DESTINATION="/tmp/frzr_root/etc/first-boot/"
+# if [[ ! -d "$DESTINATION" ]]; then
+#   mkdir -p /tmp/frzr_root/etc/first-boot
+# fi
 
 # curl --http1.1 -# -L -o "${TMP_PKG}" -C - "${URL}" 2>&1 |
 #   stdbuf -oL tr '\r' '\n' | grep --line-buffered -oP '[0-9]*+(?=.[0-9])' | clean_progress 100 |
 #   whiptail --gauge "正在下载 Steam ..." 10 50 0
 
-tar -I zstd -xvf "$STM_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O >"$TMP_FILE"
-mv "$TMP_FILE" "$DESTINATION"
+# tar -I zstd -xvf "$STM_PKG" usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -O >"$TMP_FILE"
+# mv "$TMP_FILE" "$DESTINATION"
 # rm "$TMP_PKG"
 
 TARGET=$(whiptail --menu "选择系统版本" 25 75 10 \
