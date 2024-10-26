@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ShadowBlip/InputPlumber/main/rootfs/usr/share/inputplumber/schema/device_profile_v1.json
+# Schema version number
+version: 1
+
+kind: DeviceProfile
+name: Simple keyboard profile
+description: Minimal keyboard profile for OS installer
+
+mapping:
+  # Dpad
+  - name: D-Up
+    source_event:
+      gamepad:
+        button: DPadUp
+    target_events:
+      - keyboard: KeyUp
+  - name: D-Down
+    source_event:
+      gamepad:
+        button: DPadDown
+    target_events:
+      - keyboard: KeyDown
+  - name: D-Left
+    source_event:
+      gamepad:
+        button: DPadLeft
+    target_events:
+      - keyboard: KeyLeft
+  - name: D-Right
+    source_event:
+      gamepad:
+        button: DPadRight
+    target_events:
+      - keyboard: KeyRight
+
+  # Left analog stick
+  - name: Left Stick Up
+    source_event:
+      gamepad:
+        axis:
+          name: LeftStick
+          direction: up
+          deadzone: 0.8
+    target_events:
+      - keyboard: KeyUp
+  - name: Left Stick Down
+    source_event:
+      gamepad:
+        axis:
+          name: LeftStick
+          direction: down
+          deadzone: 0.8
+    target_events:
+      - keyboard: KeyDown
+  - name: Left Stick Left
+    source_event:
+      gamepad:
+        axis:
+          name: LeftStick
+          direction: left
+          deadzone: 0.8
+    target_events:
+      - keyboard: KeyLeft
+  - name: Left Stick Right
+    source_event:
+      gamepad:
+        axis:
+          name: LeftStick
+          direction: right
+          deadzone: 0.8
+    target_events:
+      - keyboard: KeyRight
+
+  # Buttons
+  - name: A Button
+    source_event:
+      gamepad:
+        button: South
+    target_events:
+      - keyboard: KeyEnter
