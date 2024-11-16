@@ -228,7 +228,7 @@ done
 MOUNT_PATH=/tmp/frzr_root
 
 # sets DISK and DISK_DESC
-select_disk
+# select_disk
 
 # warn before erasing disk
 # if ! (whiptail --yesno --defaultno --yes-button "擦除磁盘并安装" --no-button "取消安装" "\
